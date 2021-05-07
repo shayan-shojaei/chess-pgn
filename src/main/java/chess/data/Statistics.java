@@ -37,22 +37,20 @@ public class Statistics {
     }
 
     public double getOpeningWinRate(String opening) {
-        Stream<Game> gamesWithOpening = pgn.getGames().stream().filter(game -> game.getInfo().get("Opening").equals(opening));
-        double winCount = gamesWithOpening.filter(game -> game.getResult().equals("1-0")).count();
-        return winCount / gamesWithOpening.count() * 100;
+        List<Game> gamesWithOpening = pgn.getGames().stream().filter(game -> game.getInfo().get("Opening").equals(opening)).collect(Collectors.toList());
+        double winCount = gamesWithOpening.stream().filter(game -> game.getResult().equals("1-0")).count();
+        return winCount / gamesWithOpening.size() * 100;
     }
 
-    public List<Move> getMostUsedMoves(int n) {
+    public List<Move> getMostUsedMoves(int limit) {
         HashMap<Move, Integer> moves = new HashMap<>();
-        int gameIndex = 0;
-        while (moves.size() < n) {
-            for (Move m : pgn.getGames().get(gameIndex).getBoard().getMoves()) {
+        for (Game game : pgn.getGames()) {
+            for (Move m : game.getBoard().getMoves()) {
                 moves.put(m, moves.getOrDefault(m, 0) + 1);
             }
-            gameIndex++;
         }
 
-        return moves.keySet().stream().sorted(Comparator.comparingInt(moves::get)).collect(Collectors.toList());
+        return moves.keySet().stream().sorted(Comparator.comparingInt(moves::get)).limit(limit).collect(Collectors.toList());
     }
 
     public double expectedMovesBeforeFirstCapture() {
@@ -71,15 +69,15 @@ public class Statistics {
         return foundCount == 0 ? -1 : Arrays.stream(movesBeforeFirstCapture).sum() / foundCount;
     }
 
-    public List<Move> predictNextMove(List<Move> previousMoves) {
+    public List<Move> predictNextMove(List<Move> previousMoves, int limit) {
         HashMap<Move, Integer> moves = new HashMap<>();
         for (Game game : pgn.getGames()) {
-            Stream<Move> movesSublist = game.getBoard().getMoves().stream().limit(previousMoves.size());
-            if (movesSublist.equals(previousMoves.stream())) {
-                Move toUpdate = game.getBoard().getMoves().get(game.getBoard().getMoves().size());
+            int indexOfSub = Collections.indexOfSubList(game.getBoard().getMoves(), previousMoves);
+            if (indexOfSub != -1) {
+                Move toUpdate = game.getBoard().getMoves().get(indexOfSub + previousMoves.size());
                 moves.put(toUpdate, moves.getOrDefault(toUpdate, 0) + 1);
             }
         }
-        return moves.keySet().stream().sorted(Comparator.comparingInt(moves::get)).collect(Collectors.toList());
+        return moves.keySet().stream().sorted(Comparator.comparingInt(moves::get)).limit(limit).collect(Collectors.toList());
     }
 }
