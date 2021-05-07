@@ -50,7 +50,7 @@ public class Statistics {
             }
         }
 
-        return moves.keySet().stream().sorted(Comparator.comparingInt(moves::get)).limit(limit).collect(Collectors.toList());
+        return moves.keySet().stream().sorted(Comparator.comparingInt(moves::get).reversed()).limit(limit).collect(Collectors.toList());
     }
 
     public double expectedMovesBeforeFirstCapture() {
@@ -78,6 +78,6 @@ public class Statistics {
                 moves.put(toUpdate, moves.getOrDefault(toUpdate, 0) + 1);
             }
         }
-        return moves.keySet().stream().sorted(Comparator.comparingInt(moves::get)).limit(limit).collect(Collectors.toList());
+        return moves.keySet().stream().sorted(Comparator.comparingInt(moves::get).reversed()).limit(limit).collect(Collectors.toList());
     }
 }
