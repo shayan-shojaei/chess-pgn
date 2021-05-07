@@ -4,12 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class BoardTest {
     Board board;
 
@@ -164,11 +158,11 @@ class BoardTest {
                 Qxc8
                 dxc8=Q+
                 Bf8
-                Qxf8#
-                """.split("\n");
+                Qxf8#""".split("\n");
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i], i % 2 == 0);
         }
+        Assertions.assertEquals(18, board.getCaptures().size());
         Assertions.assertEquals("""
                   A B C D E F G H\s
                 1             K  \s
@@ -179,6 +173,147 @@ class BoardTest {
                 6 p       B   p  \s
                 7               p\s
                 8           Q   k\s
+                """, board.toString());
+
+    }
+
+    @Test
+    void basicUndo() {
+        String[] moves = """
+                d4
+                Nf6
+                c4
+                """.split("\n");
+        for (int i = 0; i < moves.length; i++) {
+            board.doMove(moves[i], i % 2 == 0);
+        }
+        board.undoMove();
+        Assertions.assertEquals("""
+                  A B C D E F G H\s
+                1 R N B Q K B N R\s
+                2 P P P   P P P P\s
+                3                \s
+                4       P        \s
+                5                \s
+                6           n    \s
+                7 p p p p p p p p\s
+                8 r n b q k b   r\s
+                """, board.toString());
+
+    }
+
+    @Test
+    void captureUndo() {
+        String[] moves = """
+                d4
+                Nf6
+                c4
+                g6
+                Nc3
+                d5
+                cxd5
+                """.split("\n");
+        for (int i = 0; i < moves.length; i++) {
+            board.doMove(moves[i], i % 2 == 0);
+        }
+        Assertions.assertEquals(1, board.getCaptures().size());
+        board.undoMove();
+        Assertions.assertEquals(0, board.getCaptures().size());
+        Assertions.assertEquals("""
+                  A B C D E F G H\s
+                1 R   B Q K B N R\s
+                2 P P     P P P P\s
+                3     N          \s
+                4     P P        \s
+                5       p        \s
+                6           n p  \s
+                7 p p p   p p   p\s
+                8 r n b q k b   r\s
+                """, board.toString());
+
+    }
+
+    @Test
+    void promotionUndo() {
+        String[] moves = """
+                d4
+                Nf6
+                c4
+                g6
+                Nc3
+                d5
+                cxd5
+                Nxd5
+                e4
+                Nxc3
+                bxc3
+                Bg7
+                Bg5
+                c5
+                Rc1
+                cxd4
+                cxd4
+                O-O
+                d5
+                f6
+                Bf4
+                Qa5+
+                Bd2
+                Qxa2
+                Nf3
+                Qa3
+                Bc4
+                Qd6
+                O-O
+                Kh8
+                Nd4
+                a6
+                Re1
+                b5
+                Ba2
+                Bd7
+                Qb3
+                Rc8
+                Rxc8+
+                Bxc8
+                Bb4
+                Qb6
+                d6
+                e6
+                Nxe6
+                Bxe6
+                Qxe6
+                Qd8
+                Ba5
+                Qf8
+                Rc1
+                Nc6
+                Rxc6
+                Re8
+                d7
+                Rxe6
+                Bxe6
+                f5
+                Rc8
+                Qxc8
+                dxc8=Q+
+                """.split("\n");
+        for (int i = 0; i < moves.length; i++) {
+            board.doMove(moves[i], i % 2 == 0);
+        }
+        Assertions.assertEquals(17, board.getCaptures().size());
+        board.undoMove();
+        Assertions.assertEquals(16, board.getCaptures().size());
+        Assertions.assertEquals("""
+                  A B C D E F G H\s
+                1             K  \s
+                2           P P P\s
+                3                \s
+                4         P      \s
+                5 B p       p    \s
+                6 p       B   p  \s
+                7       P     b p\s
+                8     q         k\s
                 """, board.toString());
 
     }

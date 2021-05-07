@@ -53,7 +53,7 @@ public class Board {
 
         boolean isCapturing = notation.contains("x");
         notation = notation.replaceFirst("x", "");
-        String promotion = notation.contains("=") ? notation.substring(notation.indexOf('=') + 1,notation.indexOf('=') + 2) : null;
+        String promotion = notation.contains("=") ? notation.substring(notation.indexOf('=') + 1, notation.indexOf('=') + 2) : null;
         if (promotion != null && !whiteMove) {
             promotion = promotion.toLowerCase(Locale.ROOT);
         }
@@ -98,7 +98,7 @@ public class Board {
             Square from = bishopPositions[i];
             char[] currentFr = from.toString().toCharArray();
             if (Math.abs(currentFr[0] - fr[0]) == Math.abs(currentFr[1] - fr[1])) {
-                movePiece(isCapturing, from, to, moving);
+                movePiece(isCapturing, from, to, moving, null);
                 break;
             }
         }
@@ -114,7 +114,7 @@ public class Board {
             Optional<Square> maybe = knightPositions.stream().filter(square -> square.toString().startsWith(col)).findFirst();
             if (maybe.isPresent()) {
                 from = maybe.get();
-                movePiece(isCapturing, from, to, moving);
+                movePiece(isCapturing, from, to, moving, null);
                 return;
             }
         }
@@ -130,7 +130,7 @@ public class Board {
                 int horizontalDiff = Math.abs(currentFr[1] - fr[1]);
                 int verticalDiff = Math.abs(currentFr[0] - fr[0]);
                 if ((horizontalDiff == 1 && verticalDiff == 2) || (horizontalDiff == 2 && verticalDiff == 1)) {
-                    movePiece(isCapturing, currentMove.getTo(), to, moving);
+                    movePiece(isCapturing, currentMove.getTo(), to, moving, null);
                     return;
                 }
             }
@@ -159,14 +159,14 @@ public class Board {
                 from = Square.G8;
                 break;
         }
-        movePiece(isCapturing, from, to, moving);
+        movePiece(isCapturing, from, to, moving, null);
     }
 
     private void moveKingAndQueen(Square to, Piece moving, boolean whiteMove, boolean isCapturing) {
         Square[] positions = findPieceLocations(moving);
         if (positions.length > 0) {
             Square from = positions[0];
-            movePiece(isCapturing, from, to, moving);
+            movePiece(isCapturing, from, to, moving, null);
         }
 
     }
@@ -179,7 +179,7 @@ public class Board {
             col = col.toUpperCase(Locale.ROOT);
             for (Square fromPos : positions) {
                 if (fromPos.toString().contains(col)) {
-                    movePiece(isCapturing, fromPos, to, moving);
+                    movePiece(isCapturing, fromPos, to, moving, null);
                     return;
                 }
             }
@@ -194,7 +194,7 @@ public class Board {
                 int horizontalDiff = Math.abs(currentFr[0] - fr[0]);
                 int verticalDiff = Math.abs(currentFr[1] - fr[1]);
                 if ((horizontalDiff > 0 && verticalDiff == 0) || (horizontalDiff == 0 && verticalDiff > 0)) {
-                    movePiece(isCapturing, currentMove.getTo(), to, moving);
+                    movePiece(isCapturing, currentMove.getTo(), to, moving, null);
                     return;
                 }
             }
@@ -227,7 +227,7 @@ public class Board {
                 from = Square.H8;
             }
         }
-        movePiece(isCapturing, from, to, moving);
+        movePiece(isCapturing, from, to, moving, null);
     }
 
     private void castle(boolean kingSide, boolean whiteMove) {
@@ -237,20 +237,22 @@ public class Board {
         Square kingFrom = whiteMove && kingSide ? Square.H1 : whiteMove ? Square.A1 : kingSide ? Square.H8 : Square.H1;
         Square rookTo = whiteMove && kingSide ? Square.F1 : whiteMove ? Square.D1 : kingSide ? Square.F8 : Square.D1;
         Square kingTo = whiteMove && kingSide ? Square.G1 : whiteMove ? Square.C1 : kingSide ? Square.G8 : Square.C1;
-        movePiece(false, kingFrom, kingTo, king);
-        movePiece(false, rookFrom, rookTo, rook);
+        movePiece(false, kingFrom, kingTo, king, null);
+        movePiece(false, rookFrom, rookTo, rook, null);
     }
 
 
     private void movePawn(Square to, Piece moving, boolean whiteMove, boolean isCapturing, Piece promotion, String col) {
         ArrayList<Square> positions = (ArrayList<Square>) Arrays.stream(findPieceLocations(moving)).collect(Collectors.toList());
         char[] fr = to.toString().toCharArray();
+
+
         Square from = null;
         if (isCapturing) {
             int rank = to.toString().charAt(1) - '0';
             rank += whiteMove ? -1 : 1;
             from = Square.getEnumByString(col + rank);
-            movePiece(true, from, to, promotion != null ? promotion : moving);
+            movePiece(true, from, to, moving, promotion);
             return;
         }
 
@@ -260,27 +262,33 @@ public class Board {
             int horizontalDiff = Math.abs(currentFr[0] - fr[0]);
             int verticalDiff = Math.abs(currentFr[1] - fr[1]);
             if (verticalDiff == 1 && (isCapturing && horizontalDiff == 1) || (horizontalDiff == 0)) {
-                movePiece(isCapturing, fromPos, to, promotion != null ? promotion : moving);
+                movePiece(isCapturing, fromPos, to, moving, promotion);
                 return;
             }
         }
 
         //no result in loop --- default positions
         from = Square.getEnumByString(to.toString().charAt(0) + (whiteMove ? "2" : "7"));
-        movePiece(isCapturing, from, to, promotion != null ? promotion : moving);
+        movePiece(isCapturing, from, to, moving, promotion);
     }
 
-    private void movePiece(boolean isCapturing, Square from, Square to, Piece moving) {
+    private void movePiece(boolean isCapturing, Square from, Square to, Piece moving, Piece promotion) {
         Move move = null;
         if (isCapturing) {
             Piece captured = grid.get(to);
             capturedPieces.add(captured);
-            move = new Move(from, to, moving, captured);
+            if (promotion != null) {
+                capturedPieces.add(moving);
+                capturedPieces.remove(promotion);
+                move = new Move(from, to, moving, captured, promotion);
+            } else {
+                move = new Move(from, to, moving, captured);
+            }
         } else {
             move = new Move(from, to, moving);
         }
         grid.put(from, null);
-        grid.put(to, moving);
+        grid.put(to, promotion == null ? moving : promotion);
         moves.push(move);
     }
 
@@ -305,8 +313,15 @@ public class Board {
 
     public Move undoMove() {
         Move toUndo = moves.pop();
-
-
+        grid.put(toUndo.getTo(), toUndo.getCaptured() == null ? null : toUndo.getCaptured());
+        if (toUndo.getCaptured() != null) {
+            capturedPieces.remove(toUndo.getCaptured());
+        }
+        if (toUndo.getPromotion() != null) {
+            capturedPieces.remove(toUndo.getMoving());
+            capturedPieces.add(toUndo.getPromotion());
+        }
+        grid.put(toUndo.getFrom(), toUndo.getMoving());
         return toUndo;
     }
 

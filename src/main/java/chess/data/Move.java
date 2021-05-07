@@ -9,17 +9,20 @@ public class Move {
 
     public Move(Square from, Square to, Piece moving) {
         this.to = to;
+        this.from = from;
         this.moving = moving;
     }
 
     public Move(Square from, Square to, Piece moving, Piece captured) {
         this.to = to;
+        this.from = from;
         this.moving = moving;
         this.captured = captured;
     }
 
     public Move(Square from, Square to, Piece moving, Piece captured, Piece promotion) {
         this.to = to;
+        this.from = from;
         this.moving = moving;
         this.captured = captured;
         this.promotion = promotion;
@@ -27,6 +30,10 @@ public class Move {
 
     public Square getTo() {
         return to;
+    }
+
+    public Square getFrom() {
+        return from;
     }
 
     public Piece getMoving() {
