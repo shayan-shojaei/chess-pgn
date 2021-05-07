@@ -13,7 +13,8 @@ public class CommonUiFuncs {
     public static void initDefaultJFrame(JFrame frame) {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setResizable(false);
-        frame.setSize(new Dimension(800, 500));
+        frame.setSize(new Dimension(1100, 750));
+        frame.getContentPane().setBackground(Color.DARK_GRAY);
         frame.setTitle("Chess App");
     }
 
@@ -29,6 +30,14 @@ public class CommonUiFuncs {
             window.setIconImage(bufferedImage);
         } catch (IOException exception) {
             exception.printStackTrace();
+        }
+    }
+
+    public static void setSystemLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 }

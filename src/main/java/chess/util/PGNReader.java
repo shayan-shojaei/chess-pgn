@@ -2,14 +2,8 @@ package chess.util;
 
 import chess.data.Board;
 import chess.data.Game;
-import chess.data.Move;
-import chess.data.enums.Piece;
-import chess.data.enums.Square;
-
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +12,7 @@ public class PGNReader {
         try {
             File mFile = new File(location);
             FileInputStream stream = new FileInputStream(mFile);
-            String pgnText = new String(stream.readAllBytes());
+            String pgnText = new String(stream.readAllBytes()).strip().trim();
             return importGamesIntoList(pgnText);
         } catch (Exception e) {
             System.err.println(e instanceof FileNotFoundException ?
@@ -31,7 +25,8 @@ public class PGNReader {
 
     private static ArrayList<Game> importGamesIntoList(String pgnText) {
         ArrayList<Game> games = new ArrayList<>();
-        String[] parts = pgnText.split("\n\n");
+        String[] parts = pgnText.trim().split("(\\r?\\n){2}");
+        System.out.println(parts.length);
         for (int i = 0; i < parts.length - 1; i += 2) {
             Game game = new Game();
             String gameInfo = parts[i];

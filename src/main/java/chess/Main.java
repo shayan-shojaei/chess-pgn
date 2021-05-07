@@ -1,14 +1,16 @@
 package chess;
 
-import chess.data.Board;
 import chess.gui.Home;
-import chess.util.PGNReader;
+import chess.util.CommonUiFuncs;
 
-import java.util.Map;
+import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        Home home = new Home();
-        home.init();
+        SwingUtilities.invokeLater(() -> {
+            CommonUiFuncs.setSystemLookAndFeel();
+            Home home = new Home();
+            home.init();
+        });
     }
 }
