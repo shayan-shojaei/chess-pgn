@@ -395,7 +395,7 @@ public class Board {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("  ");
+        sb.append("0 ");
         for (int i = 0; i < 8; i++) {
             sb.append((char) ('A' + i));
             sb.append(' ');
