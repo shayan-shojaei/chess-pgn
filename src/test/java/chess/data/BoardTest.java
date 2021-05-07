@@ -169,18 +169,17 @@ class BoardTest {
         for (int i = 0; i < moves.length; i++) {
             board.doMove(moves[i], i % 2 == 0);
         }
-        System.out.println(board.toString());
-        /*Assertions.assertEquals("""
+        Assertions.assertEquals("""
                   A B C D E F G H\s
-                1       K        \s
-                2 P b            \s
-                3 n             R\s
-                4         N   P  \s
-                5       P   b    \s
-                6       p     Q  \s
-                7 p p         n  \s
-                8 r     q   r k R\s
-                """, board.toString());*/
+                1             K  \s
+                2           P P P\s
+                3                \s
+                4         P      \s
+                5 B p       p    \s
+                6 p       B   p  \s
+                7               p\s
+                8           Q   k\s
+                """, board.toString());
 
     }
 }
