@@ -42,3 +42,7 @@ buildNumber.properties
 .flattened-pom.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/java,maven
+
+# settings
+lock/
+settings.json
