@@ -33,6 +33,10 @@ public class Board {
     }
 
 
+    public void doMove(Move move) {
+        movePiece(move.getCaptured() != null, move.getFrom(), move.getTo(), move.getMoving(), move.getPromotion());
+    }
+
     public void doMove(String notation, boolean whiteMove) {
 
         if (notation.equals("O-O-O")) {

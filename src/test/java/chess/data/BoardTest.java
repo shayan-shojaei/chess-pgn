@@ -1,5 +1,7 @@
 package chess.data;
 
+import chess.data.enums.Piece;
+import chess.data.enums.Square;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -316,5 +318,23 @@ class BoardTest {
                 8     q         k\s
                 """, board.toString());
 
+    }
+
+
+    @Test
+    void manualMove() {
+        board.doMove(new Move(Square.A2, Square.A4, Piece.WHITE_PAWN));
+        board.doMove(new Move(Square.D7, Square.D6, Piece.BLACK_PAWN));
+        Assertions.assertEquals("""
+                  A B C D E F G H\s
+                1 R N B Q K B N R\s
+                2   P P P P P P P\s
+                3                \s
+                4 P              \s
+                5                \s
+                6       p        \s
+                7 p p p   p p p p\s
+                8 r n b q k b n r\s
+                """, board.toString());
     }
 }
