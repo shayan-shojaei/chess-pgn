@@ -6,6 +6,7 @@ import chess.util.Util;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -32,6 +33,9 @@ public class Board {
         }
     }
 
+    public List<Move> getMoves() {
+        return new ArrayList<>(moves);
+    }
 
     public void doMove(Move move) {
         movePiece(move.getCaptured() != null, move.getFrom(), move.getTo(), move.getMoving(), move.getPromotion());

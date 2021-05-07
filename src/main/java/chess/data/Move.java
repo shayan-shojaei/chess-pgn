@@ -48,5 +48,19 @@ public class Move {
         return promotion;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Move)) return false;
+
+        if (this == o) return true;
+
+        Move move = (Move) o;
+
+        if (to != move.to) return false;
+        if (from != move.from) return false;
+        if (moving != move.moving) return false;
+        if (captured != move.captured) return false;
+        return promotion == move.promotion;
+    }
 }
 

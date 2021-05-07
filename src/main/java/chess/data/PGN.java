@@ -16,6 +16,10 @@ public class PGN {
         insertBatchFromPGNFile(path);
     }
 
+    public ArrayList<Game> getGames() {
+        return games;
+    }
+
     public void insertBatchFromPGNFile(String path) {
         games.addAll(PGNReader.readPGNFile(path));
     }
