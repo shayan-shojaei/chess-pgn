@@ -1,8 +1,5 @@
 package chess.data.enums;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public enum Piece {
     WHITE_KING('K'),
     WHITE_QUEEN('Q'),
@@ -19,7 +16,7 @@ public enum Piece {
 
     private char val;
 
-    private Piece(char stringVal) {
+    Piece(char stringVal) {
         val = stringVal;
     }
 

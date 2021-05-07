@@ -98,4 +98,89 @@ class BoardTest {
                 """, board.toString());
 
     }
+
+    @Test
+    void promotion() {
+        String[] moves = """
+                d4
+                Nf6
+                c4
+                g6
+                Nc3
+                d5
+                cxd5
+                Nxd5
+                e4
+                Nxc3
+                bxc3
+                Bg7
+                Bg5
+                c5
+                Rc1
+                cxd4
+                cxd4
+                O-O
+                d5
+                f6
+                Bf4
+                Qa5+
+                Bd2
+                Qxa2
+                Nf3
+                Qa3
+                Bc4
+                Qd6
+                O-O
+                Kh8
+                Nd4
+                a6
+                Re1
+                b5
+                Ba2
+                Bd7
+                Qb3
+                Rc8
+                Rxc8+
+                Bxc8
+                Bb4
+                Qb6
+                d6
+                e6
+                Nxe6
+                Bxe6
+                Qxe6
+                Qd8
+                Ba5
+                Qf8
+                Rc1
+                Nc6
+                Rxc6
+                Re8
+                d7
+                Rxe6
+                Bxe6
+                f5
+                Rc8
+                Qxc8
+                dxc8=Q+
+                Bf8
+                Qxf8#
+                """.split("\n");
+        for (int i = 0; i < moves.length; i++) {
+            board.doMove(moves[i], i % 2 == 0);
+        }
+        System.out.println(board.toString());
+        /*Assertions.assertEquals("""
+                  A B C D E F G H\s
+                1       K        \s
+                2 P b            \s
+                3 n             R\s
+                4         N   P  \s
+                5       P   b    \s
+                6       p     Q  \s
+                7 p p         n  \s
+                8 r     q   r k R\s
+                """, board.toString());*/
+
+    }
 }

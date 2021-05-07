@@ -53,7 +53,7 @@ public class Board {
 
         boolean isCapturing = notation.contains("x");
         notation = notation.replaceFirst("x", "");
-        String promotion = notation.contains("=") ? notation.substring(notation.indexOf('='), notation.indexOf('=') + 1) : null;
+        String promotion = notation.contains("=") ? notation.substring(notation.indexOf('=') + 1,notation.indexOf('=') + 2) : null;
         if (promotion != null && !whiteMove) {
             promotion = promotion.toLowerCase(Locale.ROOT);
         }
@@ -202,10 +202,30 @@ public class Board {
 
         //no result in loop --- default positions
         Square from = null;
-        if (to.toString().contains("A")) {
-            from = whiteMove ? Square.A1 : Square.A8;
-        } else if (to.toString().contains("H")) {
-            from = whiteMove ? Square.H1 : Square.H8;
+        if (whiteMove) {
+            char[] daf = Square.A1.toString().toCharArray();
+            char[] dhf = Square.H1.toString().toCharArray();
+            int horizontalADiff = Math.abs(daf[0] - fr[0]);
+            int horizontalHDiff = Math.abs(dhf[0] - fr[0]);
+            int verticalADiff = Math.abs(daf[1] - fr[1]);
+            int verticalHDiff = Math.abs(dhf[1] - fr[1]);
+            if (verticalADiff > 0 && horizontalADiff == 0 || horizontalADiff > 0 && verticalADiff == 0) {
+                from = Square.A1;
+            } else if (verticalHDiff > 0 && horizontalHDiff == 0 || horizontalHDiff > 0 && verticalHDiff == 0) {
+                from = Square.H1;
+            }
+        } else {
+            char[] daf = Square.A8.toString().toCharArray();
+            char[] dhf = Square.H8.toString().toCharArray();
+            int horizontalADiff = Math.abs(daf[0] - fr[0]);
+            int horizontalHDiff = Math.abs(dhf[0] - fr[0]);
+            int verticalADiff = Math.abs(daf[1] - fr[1]);
+            int verticalHDiff = Math.abs(dhf[1] - fr[1]);
+            if (verticalADiff > 0 && horizontalADiff == 0 || horizontalADiff > 0 && verticalADiff == 0) {
+                from = Square.A8;
+            } else if (verticalHDiff > 0 && horizontalHDiff == 0 || horizontalHDiff > 0 && verticalHDiff == 0) {
+                from = Square.H8;
+            }
         }
         movePiece(isCapturing, from, to, moving);
     }

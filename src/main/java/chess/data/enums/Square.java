@@ -68,7 +68,7 @@ public enum Square {
 
     private String val;
 
-    private Square(String stringVal) {
+    Square(String stringVal) {
         val = stringVal;
     }
 

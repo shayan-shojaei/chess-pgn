@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 class PGNReaderTest {
 
-
     @Test
     void testReadPGNFile() {
         ArrayList<Game> games = PGNReader.readPGNFile(PGNReaderTest.class.getResource("/test.pgn").getPath());
