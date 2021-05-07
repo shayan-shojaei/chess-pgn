@@ -28,11 +28,20 @@ public class Board {
         this();
         for (int i = 0; i < doneMoves.size(); i++) {
             doMove(doneMoves.get(i), i % 2 == 0);
+            updateCharArray();
         }
     }
 
 
     public void doMove(String notation, boolean whiteMove) {
+
+        if (notation.equals("O-O-O")) {
+            castle(false, whiteMove);
+            return;
+        } else if (notation.equals("O-O")) {
+            castle(true, whiteMove);
+            return;
+        }
 
         // retrieve square address from notation
         String squareRegex = "[a-h][0-8]";
@@ -45,10 +54,17 @@ public class Board {
         boolean isCapturing = notation.contains("x");
         notation = notation.replaceFirst("x", "");
         String promotion = notation.contains("=") ? notation.substring(notation.indexOf('='), notation.indexOf('=') + 1) : null;
+        if (promotion != null && !whiteMove) {
+            promotion = promotion.toLowerCase(Locale.ROOT);
+        }
         notation = notation.replaceFirst("x?(=[A-Z])?", "");
 
         int fromNotationEnd = notation.indexOf(to.toString().toLowerCase(Locale.ROOT));
         int fromNotationStart = movingPiece.toChar() == Character.MIN_VALUE ? 0 : 1;
+        String fromCol = null;
+        if (fromNotationStart < fromNotationEnd) {
+            fromCol = notation.substring(fromNotationStart, fromNotationEnd).toUpperCase(Locale.ROOT);
+        }
 
         switch (movingPiece) {
             case WHITE_BISHOP:
@@ -57,8 +73,21 @@ public class Board {
                 break;
             case WHITE_KNIGHT:
             case BLACK_KNIGHT:
-                moveKnight(to, movingPiece, whiteMove, isCapturing);
+                moveKnight(to, movingPiece, whiteMove, isCapturing, fromCol);
                 break;
+            case WHITE_ROOK:
+            case BLACK_ROOK:
+                moveRook(to, movingPiece, whiteMove, isCapturing, fromCol);
+                break;
+            case WHITE_KING:
+            case BLACK_KING:
+            case WHITE_QUEEN:
+            case BLACK_QUEEN:
+                moveKingAndQueen(to, movingPiece, whiteMove, isCapturing);
+                break;
+            default:
+                //pawn
+                movePawn(to, movingPiece, whiteMove, isCapturing, promotion != null ? Piece.getEnumByString(promotion.charAt(0)) : null, fromCol);
         }
     }
 
@@ -76,13 +105,26 @@ public class Board {
     }
 
 
-    private void moveKnight(Square to, Piece moving, boolean whiteMove, boolean isCapturing) {
+    private void moveKnight(Square to, Piece moving, boolean whiteMove, boolean isCapturing, String col) {
         ArrayList<Square> knightPositions = (ArrayList<Square>) Arrays.stream(findPieceLocations(moving)).collect(Collectors.toList());
         char[] fr = to.toString().toCharArray();
+
+        Square from = null;
+        if (col != null) {
+            Optional<Square> maybe = knightPositions.stream().filter(square -> square.toString().startsWith(col)).findFirst();
+            if (maybe.isPresent()) {
+                from = maybe.get();
+                movePiece(isCapturing, from, to, moving);
+                return;
+            }
+        }
 
         Stack<Move> pastMoves = (Stack<Move>) moves.clone();
         while (!pastMoves.isEmpty()) {
             Move currentMove = pastMoves.pop();
+            if (whiteMove == Character.isLowerCase(currentMove.getMoving().toChar())) {
+                continue;
+            }
             if (knightPositions.contains(currentMove.getTo())) {
                 char[] currentFr = currentMove.getTo().toString().toCharArray();
                 int horizontalDiff = Math.abs(currentFr[1] - fr[1]);
@@ -95,7 +137,6 @@ public class Board {
         }
 
         //no result in loop --- default positions
-        Square from = null;
         switch (to) {
             case D2:
             case C3:
@@ -119,6 +160,94 @@ public class Board {
                 break;
         }
         movePiece(isCapturing, from, to, moving);
+    }
+
+    private void moveKingAndQueen(Square to, Piece moving, boolean whiteMove, boolean isCapturing) {
+        Square[] positions = findPieceLocations(moving);
+        if (positions.length > 0) {
+            Square from = positions[0];
+            movePiece(isCapturing, from, to, moving);
+        }
+
+    }
+
+    private void moveRook(Square to, Piece moving, boolean whiteMove, boolean isCapturing, String col) {
+        ArrayList<Square> positions = (ArrayList<Square>) Arrays.stream(findPieceLocations(moving)).collect(Collectors.toList());
+        char[] fr = to.toString().toCharArray();
+
+        if (col != null) {
+            col = col.toUpperCase(Locale.ROOT);
+            for (Square fromPos : positions) {
+                if (fromPos.toString().contains(col)) {
+                    movePiece(isCapturing, fromPos, to, moving);
+                    return;
+                }
+            }
+
+        }
+
+        Stack<Move> pastMoves = (Stack<Move>) moves.clone();
+        while (!pastMoves.isEmpty()) {
+            Move currentMove = pastMoves.pop();
+            if (positions.contains(currentMove.getTo())) {
+                char[] currentFr = currentMove.getTo().toString().toCharArray();
+                int horizontalDiff = Math.abs(currentFr[0] - fr[0]);
+                int verticalDiff = Math.abs(currentFr[1] - fr[1]);
+                if ((horizontalDiff > 0 && verticalDiff == 0) || (horizontalDiff == 0 && verticalDiff > 0)) {
+                    movePiece(isCapturing, currentMove.getTo(), to, moving);
+                    return;
+                }
+            }
+        }
+
+        //no result in loop --- default positions
+        Square from = null;
+        if (to.toString().contains("A")) {
+            from = whiteMove ? Square.A1 : Square.A8;
+        } else if (to.toString().contains("H")) {
+            from = whiteMove ? Square.H1 : Square.H8;
+        }
+        movePiece(isCapturing, from, to, moving);
+    }
+
+    private void castle(boolean kingSide, boolean whiteMove) {
+        Piece king = whiteMove ? Piece.WHITE_KING : Piece.BLACK_KING;
+        Piece rook = whiteMove ? Piece.WHITE_ROOK : Piece.BLACK_ROOK;
+        Square rookFrom = whiteMove ? Square.E1 : Square.E8;
+        Square kingFrom = whiteMove && kingSide ? Square.H1 : whiteMove ? Square.A1 : kingSide ? Square.H8 : Square.H1;
+        Square rookTo = whiteMove && kingSide ? Square.F1 : whiteMove ? Square.D1 : kingSide ? Square.F8 : Square.D1;
+        Square kingTo = whiteMove && kingSide ? Square.G1 : whiteMove ? Square.C1 : kingSide ? Square.G8 : Square.C1;
+        movePiece(false, kingFrom, kingTo, king);
+        movePiece(false, rookFrom, rookTo, rook);
+    }
+
+
+    private void movePawn(Square to, Piece moving, boolean whiteMove, boolean isCapturing, Piece promotion, String col) {
+        ArrayList<Square> positions = (ArrayList<Square>) Arrays.stream(findPieceLocations(moving)).collect(Collectors.toList());
+        char[] fr = to.toString().toCharArray();
+        Square from = null;
+        if (isCapturing) {
+            int rank = to.toString().charAt(1) - '0';
+            rank += whiteMove ? -1 : 1;
+            from = Square.getEnumByString(col + rank);
+            movePiece(true, from, to, promotion != null ? promotion : moving);
+            return;
+        }
+
+
+        for (Square fromPos : positions) {
+            char[] currentFr = fromPos.toString().toCharArray();
+            int horizontalDiff = Math.abs(currentFr[0] - fr[0]);
+            int verticalDiff = Math.abs(currentFr[1] - fr[1]);
+            if (verticalDiff == 1 && (isCapturing && horizontalDiff == 1) || (horizontalDiff == 0)) {
+                movePiece(isCapturing, fromPos, to, promotion != null ? promotion : moving);
+                return;
+            }
+        }
+
+        //no result in loop --- default positions
+        from = Square.getEnumByString(to.toString().charAt(0) + (whiteMove ? "2" : "7"));
+        movePiece(isCapturing, from, to, promotion != null ? promotion : moving);
     }
 
     private void movePiece(boolean isCapturing, Square from, Square to, Piece moving) {
