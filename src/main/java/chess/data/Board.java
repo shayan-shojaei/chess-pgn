@@ -337,7 +337,7 @@ public class Board {
 
     private static char[] BLACK_MAIN = new char[]{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'};
 
-    private void resetBoard() {
+    public Stack<Move> resetBoard() {
         for (int i = 1; i <= 8; i++) {
             for (int j = 'A'; j <= 'H'; j++) {
                 Piece piece = null;
@@ -354,10 +354,12 @@ public class Board {
             }
         }
         updateCharArray();
+        Stack<Move> movesToGetBack = new Stack<>();
         while (!moves.isEmpty()) {
-            moves.pop();
+            movesToGetBack.push(moves.pop());
         }
         capturedPieces.clear();
+        return movesToGetBack;
     }
 
     private void updateCharArray() {

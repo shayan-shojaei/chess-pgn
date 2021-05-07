@@ -1,10 +1,12 @@
 package chess.data;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Game {
-    private Map<String, String> info = new HashMap<>();
+    private final Map<String, String> info = new HashMap<>();
     private Board board;
 
     public Game() {
@@ -31,4 +33,33 @@ public class Game {
         return info;
     }
 
+    public String getWhitePlayer() {
+        return info.getOrDefault("White", "N/A");
+    }
+
+    public String getBlackPlayer() {
+        return info.getOrDefault("Black", "N/A");
+    }
+
+    public String getResult() {
+        return info.getOrDefault("Result", "N/A");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Game)) return false;
+        Game other = (Game) o;
+        if (((Game) o).getInfo().size() != this.getInfo().size()) return false;
+        for (Map.Entry<String, String> info : this.getInfo().entrySet()) {
+            if (other.getInfo().containsKey(info.getKey()) && !info.getValue().equals(other.getInfo().get(info.getKey()))) {
+                return false;
+            }
+        }
+        return Arrays.deepEquals(other.getBoard().getFinalPositions(), getBoard().getFinalPositions());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(info, board);
+    }
 }
