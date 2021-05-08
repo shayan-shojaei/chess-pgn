@@ -96,7 +96,7 @@ public class Home extends JFrame {
 
         CustomScrollPane scrollPane = new CustomScrollPane(gamesList);
         scrollPane.setBounds(0, 2, (int) (this.getWidth() * 0.2), this.getHeight() - 80);
-        listBorder = new BorderUIResource.TitledBorderUIResource(new EmptyBorder(8, 4, 8, 4), "Import PGN file to start");
+        listBorder = new BorderUIResource.TitledBorderUIResource(new EmptyBorder(8, 4, 8, 4), "Games List");
         listBorder.setTitleColor(Color.WHITE);
         listBorder.setTitleJustification(TitledBorder.LEFT);
         scrollPane.setBackground(Color.DARK_GRAY);
@@ -351,7 +351,6 @@ public class Home extends JFrame {
         gamesModel.clear();
         gamesModel.addAll(pgn.getGames());
         gamesList.setModel(gamesModel);
-        listBorder.setTitle(pgn.getGames().size() > 0 ? pgn.getGames().get(0).getInfo().get("Event") : "Import PGN file to start");
         updateInfo();
     }
 
