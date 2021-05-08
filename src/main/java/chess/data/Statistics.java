@@ -2,7 +2,6 @@ package chess.data;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Statistics {
     private PGN pgn;
@@ -45,7 +44,7 @@ public class Statistics {
     public List<Move> getMostUsedMoves(int limit) {
         HashMap<Move, Integer> moves = new HashMap<>();
         for (Game game : pgn.getGames()) {
-            for (Move m : game.getBoard().getMoves()) {
+            for (Move m : game.getBoard().cloneMoves()) {
                 moves.put(m, moves.getOrDefault(m, 0) + 1);
             }
         }
@@ -58,9 +57,9 @@ public class Statistics {
         double foundCount = 0;
         for (int i = 0; i < movesBeforeFirstCapture.length; i++) {
             Game game = pgn.getGames().get(i);
-            Optional<Move> firstCapture = game.getBoard().getMoves().stream().filter(m -> m.getCaptured() != null).findFirst();
+            Optional<Move> firstCapture = game.getBoard().cloneMoves().stream().filter(m -> m.getCaptured() != null).findFirst();
             if (firstCapture.isPresent()) {
-                int captureIndex = game.getBoard().getMoves().indexOf(firstCapture.get());
+                int captureIndex = game.getBoard().cloneMoves().indexOf(firstCapture.get());
                 movesBeforeFirstCapture[i] = captureIndex;
                 foundCount++;
             }
@@ -72,9 +71,9 @@ public class Statistics {
     public List<Move> predictNextMove(List<Move> previousMoves, int limit) {
         HashMap<Move, Integer> moves = new HashMap<>();
         for (Game game : pgn.getGames()) {
-            int indexOfSub = Collections.indexOfSubList(game.getBoard().getMoves(), previousMoves);
+            int indexOfSub = Collections.indexOfSubList(game.getBoard().cloneMoves(), previousMoves);
             if (indexOfSub != -1) {
-                Move toUpdate = game.getBoard().getMoves().get(indexOfSub + previousMoves.size());
+                Move toUpdate = game.getBoard().cloneMoves().get(indexOfSub + previousMoves.size());
                 moves.put(toUpdate, moves.getOrDefault(toUpdate, 0) + 1);
             }
         }

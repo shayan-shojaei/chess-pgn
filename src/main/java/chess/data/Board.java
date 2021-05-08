@@ -33,7 +33,11 @@ public class Board {
         }
     }
 
-    public List<Move> getMoves() {
+    public Stack<Move> getMoves() {
+        return moves;
+    }
+
+    public List<Move> cloneMoves() {
         return new ArrayList<>(moves);
     }
 

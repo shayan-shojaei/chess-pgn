@@ -9,14 +9,14 @@ import java.awt.*;
 public class GamesListCellRenderer extends JLabel implements ListCellRenderer<Game> {
     @Override
     public Component getListCellRendererComponent(JList<? extends Game> list, Game value, int index, boolean isSelected, boolean cellHasFocus) {
-        this.setBorder(new EmptyBorder(8, 0, 8, 0));
+        this.setBorder(new EmptyBorder(8, 3, 8, 3));
         setForeground(Color.WHITE);
-        setBackground(Color.DARK_GRAY);
-        if (cellHasFocus) {
-            setBackground(Color.BLACK);
-        }
+        setBackground(!isSelected ? Color.DARK_GRAY : Color.BLACK);
+        this.setOpaque(true);
         String title = String.format("<html>%s<br>%s<br>%s</html>", value.getWhitePlayer(), value.getBlackPlayer(), value.getResult());
         setText(title);
         return this;
     }
+
+
 }

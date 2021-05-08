@@ -56,6 +56,6 @@ class StatisticsTest {
     void predictNextMove() {
         //  idk how to test this
         Game firstGame = PGNReader.readPGNFile(GameTest.class.getResource("/test.pgn").getPath()).get(0);
-        System.out.println(stats.predictNextMove(firstGame.getBoard().getMoves().stream().limit(3).collect(Collectors.toList()), 3));
+        System.out.println(stats.predictNextMove(firstGame.getBoard().cloneMoves().stream().limit(3).collect(Collectors.toList()), 3));
     }
 }

@@ -2,6 +2,7 @@ package chess.util;
 
 import chess.data.Board;
 import chess.data.Game;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -26,13 +27,13 @@ public class PGNReader {
     private static ArrayList<Game> importGamesIntoList(String pgnText) {
         ArrayList<Game> games = new ArrayList<>();
         String[] parts = pgnText.trim().split("(\\r?\\n){2}");
-        System.out.println(parts.length);
         for (int i = 0; i < parts.length - 1; i += 2) {
             Game game = new Game();
             String gameInfo = parts[i];
             for (String line : gameInfo.split("\n")) {
-                String[] infoSplit = removeFirstAndLastCharacters(line).split(" \"");
-                game.getInfo().put(infoSplit[0], infoSplit[1].substring(0, infoSplit[1].length() - 1));
+                String key = line.substring(line.indexOf("[") + 1, line.indexOf("\"") - 1);
+                String value = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+                game.getInfo().put(key, value);
             }
             // detect all notations
             String notationRegex = "([A-Z]?+[a-z]+[0-9](=[A-Z]?[a-z]?)?\\+?#?)|O(-O)+";
@@ -48,6 +49,7 @@ public class PGNReader {
             game.setBoard(board);
             games.add(game);
         }
+
 
         return games;
     }
