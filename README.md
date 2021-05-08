@@ -7,7 +7,7 @@ This is program written in java that helps you analyze and go through games in P
 There's a gui interface available
 > Note: not all functionalities are included
 
-![GUI App](GUI.png "GUI App")
+![GUI App](gui_preview.png "GUI App")
 
 ## Usage
 
