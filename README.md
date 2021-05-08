@@ -2,6 +2,13 @@
 
 This is program written in java that helps you analyze and go through games in PGN notation format.
 
+## GUI
+
+There's a gui interface available
+> Note: not all functionalities are included
+
+![GUI App](GUI.png "GUI App")
+
 ## Usage
 
 Most classes are self-explanatory and there are tests available for a decent amount of them.
