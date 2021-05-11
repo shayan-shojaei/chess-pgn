@@ -2,9 +2,7 @@ package chess.data;
 
 import chess.data.enums.Piece;
 import chess.data.enums.Square;
-import chess.util.Util;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -35,6 +33,10 @@ public class Board {
 
     public Stack<Move> getMoves() {
         return moves;
+    }
+
+    public boolean hasMoves() {
+        return !moves.isEmpty();
     }
 
     public List<Move> cloneMoves() {
@@ -245,8 +247,8 @@ public class Board {
     private void castle(boolean kingSide, boolean whiteMove) {
         Piece king = whiteMove ? Piece.WHITE_KING : Piece.BLACK_KING;
         Piece rook = whiteMove ? Piece.WHITE_ROOK : Piece.BLACK_ROOK;
-        Square rookFrom = whiteMove ? Square.E1 : Square.E8;
-        Square kingFrom = whiteMove && kingSide ? Square.H1 : whiteMove ? Square.A1 : kingSide ? Square.H8 : Square.H1;
+        Square kingFrom = whiteMove ? Square.E1 : Square.E8;
+        Square rookFrom = whiteMove && kingSide ? Square.H1 : whiteMove ? Square.A1 : kingSide ? Square.H8 : Square.H1;
         Square rookTo = whiteMove && kingSide ? Square.F1 : whiteMove ? Square.D1 : kingSide ? Square.F8 : Square.D1;
         Square kingTo = whiteMove && kingSide ? Square.G1 : whiteMove ? Square.C1 : kingSide ? Square.G8 : Square.C1;
         movePiece(false, kingFrom, kingTo, king, null);

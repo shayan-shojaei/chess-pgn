@@ -27,7 +27,7 @@ class GameTest {
     @Test
     void testResults() {
         Assertions.assertEquals("""
-                  A B C D E F G H\s
+                0 A B C D E F G H\s
                 1       K        \s
                 2 P b            \s
                 3 n             R\s
@@ -40,7 +40,7 @@ class GameTest {
         Assertions.assertEquals(13, game.getBoard().getCaptures().size());
         game.getBoard().undoMove();
         Assertions.assertEquals("""
-                  A B C D E F G H\s
+                0 A B C D E F G H\s
                 1       K        \s
                 2 P b            \s
                 3 n             R\s
@@ -52,7 +52,7 @@ class GameTest {
                 """, game.getBoard().toString());
         Stack<Move> reverseMoves = game.getBoard().resetBoard();
         Assertions.assertEquals("""
-                  A B C D E F G H\s
+                0 A B C D E F G H\s
                 1 R N B Q K B N R\s
                 2 P P P P P P P P\s
                 3                \s
@@ -66,7 +66,7 @@ class GameTest {
             game.getBoard().doMove(reverseMoves.pop());
         }
         Assertions.assertEquals("""
-                  A B C D E F G H\s
+                0 A B C D E F G H\s
                 1       K        \s
                 2 P b            \s
                 3 n             R\s

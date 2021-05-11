@@ -82,7 +82,7 @@ class BoardTest {
             board.doMove(moves[i], i % 2 == 0);
         }
         Assertions.assertEquals("""
-                  A B C D E F G H\s
+                0 A B C D E F G H\s
                 1       K        \s
                 2 P b            \s
                 3 n             R\s
@@ -166,7 +166,7 @@ class BoardTest {
         }
         Assertions.assertEquals(18, board.getCaptures().size());
         Assertions.assertEquals("""
-                  A B C D E F G H\s
+                0 A B C D E F G H\s
                 1             K  \s
                 2           P P P\s
                 3                \s
@@ -191,7 +191,7 @@ class BoardTest {
         }
         board.undoMove();
         Assertions.assertEquals("""
-                  A B C D E F G H\s
+                0 A B C D E F G H\s
                 1 R N B Q K B N R\s
                 2 P P P   P P P P\s
                 3                \s
@@ -201,6 +201,27 @@ class BoardTest {
                 7 p p p p p p p p\s
                 8 r n b q k b   r\s
                 """, board.toString());
+
+    }
+
+    @Test
+    void fullUndo() {
+        PGN pgn = new PGN(getClass().getResource("/test.pgn").getPath());
+        Board mBoard = pgn.getGames().get(2).getBoard();
+        while (mBoard.hasMoves()) {
+            mBoard.undoMove();
+        }
+        Assertions.assertEquals("""
+                0 A B C D E F G H\s
+                1 R N B Q K B N R\s
+                2 P P P P P P P P\s
+                3                \s
+                4                \s
+                5                \s
+                6                \s
+                7 p p p p p p p p\s
+                8 r n b q k b n r\s
+                """, mBoard.toString());
 
     }
 
@@ -222,7 +243,7 @@ class BoardTest {
         board.undoMove();
         Assertions.assertEquals(0, board.getCaptures().size());
         Assertions.assertEquals("""
-                  A B C D E F G H\s
+                0 A B C D E F G H\s
                 1 R   B Q K B N R\s
                 2 P P     P P P P\s
                 3     N          \s
@@ -307,7 +328,7 @@ class BoardTest {
         board.undoMove();
         Assertions.assertEquals(16, board.getCaptures().size());
         Assertions.assertEquals("""
-                  A B C D E F G H\s
+                0 A B C D E F G H\s
                 1             K  \s
                 2           P P P\s
                 3                \s
@@ -326,7 +347,7 @@ class BoardTest {
         board.doMove(new Move(Square.A2, Square.A4, Piece.WHITE_PAWN));
         board.doMove(new Move(Square.D7, Square.D6, Piece.BLACK_PAWN));
         Assertions.assertEquals("""
-                  A B C D E F G H\s
+                0 A B C D E F G H\s
                 1 R N B Q K B N R\s
                 2   P P P P P P P\s
                 3                \s

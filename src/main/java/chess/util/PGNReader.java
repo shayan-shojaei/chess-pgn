@@ -36,7 +36,7 @@ public class PGNReader {
                 game.getInfo().put(key, value);
             }
             // detect all notations
-            String notationRegex = "([A-Z]?+[a-z]+[0-9](=[A-Z]?[a-z]?)?\\+?#?)|O(-O)+";
+            String notationRegex = "([A-Z]?+[a-z]+[0-9](=[A-Z]?[a-z]?)?\\+?#?)|(O-O)|(O-O-O)";
             Pattern notationPattern = Pattern.compile(notationRegex);
             Matcher notationMatcher = notationPattern.matcher(parts[i + 1]);
 
